@@ -1,4 +1,4 @@
-## WiseXpense
+## WiseXpense - WealthTech platform
 
 I am building a smart money management app that allow users to connect their bank accounts, load transactions, displaying charts, analyzing spending behaviours, automatic detect transactions and categorize them into defined buckets using AI. 
 
