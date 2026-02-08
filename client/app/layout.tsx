@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
+import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+});
 
 export const metadata: Metadata = {
   title: "WiseXpense",
@@ -13,12 +19,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased min-h-screen bg-background text-foreground relative selection:bg-accent/30">
-        {/* Ambient Background Gradients */}
-        <div className="fixed inset-0 -z-10 h-full w-full bg-background">
-          <div className="absolute top-0 -left-4 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
-          <div className="absolute top-0 right-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-20 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
+      <body className={`${jetbrainsMono.variable} antialiased min-h-screen bg-background text-foreground relative selection:bg-accent/30 font-mono`}>
+        {/* 
+            Ambient Background Gradients 
+            Increased opacity and size for better visibility on dark backgrounds
+        */}
+        <div className="fixed inset-0 -z-10 h-full w-full pointer-events-none overflow-hidden">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/20 rounded-full blur-[120px] opacity-70" />
+          <div className="absolute top-[20%] right-[-5%] w-[30%] h-[30%] bg-accent/15 rounded-full blur-[100px] opacity-60" />
+          <div className="absolute bottom-[-10%] left-[20%] w-[35%] h-[35%] bg-primary/15 rounded-full blur-[120px] opacity-50" />
         </div>
         {children}
       </body>

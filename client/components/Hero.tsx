@@ -8,19 +8,19 @@ export function Hero() {
     return (
         <section className="min-h-screen flex flex-col items-center justify-center text-center px-4 pt-16 relative overflow-hidden">
 
-            {/* Dynamic Background Circle behind text */}
+            {/* Center Glow Enhancement */}
             <motion.div
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 1.5, ease: "easeOut" }}
-                className="absolute -z-10 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl"
+                className="absolute -z-10 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[100px]"
             />
 
             <motion.h1
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="text-6xl md:text-8xl font-serif font-bold tracking-tight mb-6 text-primary drop-shadow-sm"
+                className="text-6xl md:text-8xl font-serif font-bold tracking-tight mb-6 text-transparent bg-clip-text bg-gradient-to-br from-primary via-primary to-accent drop-shadow-sm"
             >
                 WiseXpense
             </motion.h1>
@@ -29,7 +29,7 @@ export function Hero() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
-                className="text-xl md:text-2xl font-serif text-primary/80 mb-10 max-w-2xl mx-auto"
+                className="text-xl md:text-2xl text-primary/90 mb-10 max-w-2xl mx-auto"
             >
                 Master your financial climate
             </motion.p>
@@ -38,15 +38,15 @@ export function Hero() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.6 }}
-                className="flex flex-col sm:flex-row gap-4"
+                className="flex flex-col sm:flex-row gap-5"
             >
                 <Link href="/dashboard">
-                    <Button size="lg" className="w-40 text-lg h-12 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 transition-all hover:scale-105">
+                    <Button size="lg" className="w-44 text-lg h-14 bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 transition-all shadow-lg shadow-primary/25 border-none">
                         Sign Up
                     </Button>
                 </Link>
                 <Link href="/dashboard">
-                    <Button size="lg" variant="ghost" className="w-40 text-lg h-12 border-2 border-primary/20 text-primary hover:bg-primary/5 hover:border-primary transition-all hover:scale-105">
+                    <Button size="lg" variant="ghost" className="w-44 text-lg h-14 border border-accent/50 text-accent hover:bg-accent/10 hover:border-accent hover:text-accent font-medium hover:scale-105 transition-all">
                         Login
                     </Button>
                 </Link>

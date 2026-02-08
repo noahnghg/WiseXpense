@@ -85,7 +85,7 @@ export function Dashboard() {
                         <button onClick={() => scrollToSection(transactionsRef)} className="hover:text-primary hover:scale-105 transition-all">Transactions</button>
                         <button onClick={() => scrollToSection(analysisRef)} className="hover:text-primary hover:scale-105 transition-all">Analysis</button>
                     </div>
-                    <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold font-serif shadow-lg shadow-primary/20">
+                    <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold shadow-lg shadow-primary/20">
                         A
                     </div>
                 </div>
@@ -100,14 +100,14 @@ export function Dashboard() {
 
                 {/* Overview Section */}
                 <motion.section ref={overviewRef} variants={itemVariants} className="flex flex-col gap-2">
-                    <h1 className="text-3xl font-serif text-primary/60">Good afternoon, Alex</h1>
+                    <h1 className="text-3xl text-primary/60">Good afternoon, Alex</h1>
                     <div className="mt-4">
                         <p className="text-sm font-sans text-muted-foreground uppercase tracking-wider font-semibold">Total Balance</p>
                         <motion.h2
                             initial={{ scale: 0.9, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             transition={{ delay: 0.2, type: "spring" }}
-                            className="text-6xl md:text-7xl font-serif font-bold text-accent mt-2 drop-shadow-sm"
+                            className="text-6xl md:text-7xl font-bold text-accent mt-2 drop-shadow-sm"
                         >
                             $14,250.00
                         </motion.h2>
@@ -115,12 +115,12 @@ export function Dashboard() {
                     <div className="flex gap-4 mt-8">
                         <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 text-green-700 dark:text-green-400 border border-green-500/20">
                             <ArrowUpRight className="w-4 h-4" />
-                            <span className="font-serif font-bold">+$4,500</span>
+                            <span className="font-bold">+$4,500</span>
                             <span className="text-xs opacity-70">mo</span>
                         </div>
                         <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-red-500/10 text-red-700 dark:text-red-400 border border-red-500/20">
                             <ArrowDownLeft className="w-4 h-4" />
-                            <span className="font-serif font-bold">-$2,100</span>
+                            <span className="font-bold">-$2,100</span>
                             <span className="text-xs opacity-70">mo</span>
                         </div>
                     </div>
@@ -132,7 +132,7 @@ export function Dashboard() {
                         <div className="p-2 rounded-lg bg-primary/10 text-primary">
                             <Wallet className="w-6 h-6" />
                         </div>
-                        <h3 className="text-2xl font-serif font-bold text-primary">Money Buckets</h3>
+                        <h3 className="text-2xl font-bold text-primary">Money Buckets</h3>
                     </div>
 
                     <div className="flex gap-6 overflow-x-auto pb-6 no-scrollbar -mx-6 px-6 snap-x">
@@ -143,11 +143,11 @@ export function Dashboard() {
                                 className="flex-none w-72 p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 shadow-xl shadow-zinc-200/50 dark:shadow-none snap-center transition-all"
                             >
                                 <div className="flex justify-between items-start mb-4">
-                                    <span className="font-serif font-bold text-lg text-primary">{bucket.name}</span>
+                                    <span className="font-bold text-lg text-primary">{bucket.name}</span>
                                     <span className={`w-3 h-3 rounded-full ${bucket.color}`} />
                                 </div>
                                 <div className="flex items-end gap-1 mb-2">
-                                    <span className="text-2xl font-serif font-bold text-foreground">${bucket.current.toLocaleString()}</span>
+                                    <span className="text-2xl font-bold text-foreground">${bucket.current.toLocaleString()}</span>
                                     <span className="text-sm text-muted-foreground mb-1">/ ${bucket.target.toLocaleString()}</span>
                                 </div>
                                 <div className="h-2 w-full bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
@@ -175,7 +175,7 @@ export function Dashboard() {
                         <div className="p-2 rounded-lg bg-primary/10 text-primary">
                             <CreditCard className="w-6 h-6" />
                         </div>
-                        <h3 className="text-2xl font-serif font-bold text-primary">Latest Transactions</h3>
+                        <h3 className="text-2xl font-bold text-primary">Latest Transactions</h3>
                     </div>
 
                     <div className="flex flex-col bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-xl shadow-zinc-200/50 dark:shadow-none overflow-hidden">
@@ -188,10 +188,10 @@ export function Dashboard() {
                                 className="flex items-center justify-between p-5 border-b border-zinc-100 dark:border-zinc-800 last:border-0 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors cursor-default"
                             >
                                 <div className="flex flex-col gap-1">
-                                    <span className="font-serif font-medium text-lg text-foreground">{t.name}</span>
+                                    <span className="font-medium text-lg text-foreground">{t.name}</span>
                                     <span className="text-xs text-muted-foreground">{t.date}</span>
                                 </div>
-                                <span className={`font-serif font-bold text-lg ${t.type === 'income' ? 'text-green-600' : 'text-red-500'}`}>
+                                <span className={`font-bold text-lg ${t.type === 'income' ? 'text-green-600' : 'text-red-500'}`}>
                                     {t.type === 'income' ? '+' : ''}
                                     ${Math.abs(t.amount).toFixed(2)}
                                 </span>
@@ -209,7 +209,7 @@ export function Dashboard() {
                         <div className="p-2 rounded-lg bg-primary/10 text-primary">
                             <PieChart className="w-6 h-6" />
                         </div>
-                        <h3 className="text-2xl font-serif font-bold text-primary">Spending Analysis</h3>
+                        <h3 className="text-2xl font-bold text-primary">Spending Analysis</h3>
                     </div>
 
                     <motion.div

@@ -2,60 +2,65 @@
 
 @theme {
   --font-serif: Georgia, Cambria, "Times New Roman", Times, serif;
-  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: var(--font-mono);
+  /* Mapped from layout.tsx */
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  
+
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
-  
+
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
 
-  /* Muted colors for charts/flows */
   --color-flow-in: var(--flow-in);
   --color-flow-out: var(--flow-out);
 }
 
 :root {
   --background: #ffffff;
-  --foreground: #000000;
-  
-  /* Dark Sky Blue */
-  --primary: #334E68; 
+  --foreground: #0f172a;
+
+  --primary: #334E68;
   --primary-foreground: #ffffff;
-  
-  /* Brown Gold Yellow */
+
   --accent: #C5A059;
   --accent-foreground: #ffffff;
 
-  /* Flow Colors */
-  --flow-in: #27ae60; /* Muted Green */
-  --flow-out: #c0392b; /* Muted Red */
+  --flow-in: #27ae60;
+  --flow-out: #c0392b;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #000000;
-    --foreground: #ffffff;
+    --foreground: #f8fafc;
+
+    --primary: #829AB1;
+    --primary-foreground: #000000;
+
+    --accent: #D4B06A;
+    --accent-foreground: #000000;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans);
+  font-family: var(--font-mono);
+  /* Set default font to JetBrains Mono */
 }
 
-h1, h2, h3, h4, h5, h6, .font-serif {
+/* Ensure serif is only used explicitly */
+.font-serif {
   font-family: var(--font-serif);
 }
 
-/* Scrollbar hiding for horizontal scroll areas */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
