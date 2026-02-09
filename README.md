@@ -5,7 +5,7 @@ I am building a smart money management app that allow users to connect their ban
 
 #Tech stack (planning)
 - Backend: Spring Boot for business logic, FastAPI for machine learning inference, Go for Plaid API webhook (optional)
-- Frontend: Next.js, Tailwind CSS, Flutter (optional)
+- Frontend: Next.js, Tailwind CSS, shadcn, react native (optional)
 - Database: PostgreSQL 
 - Infrastructure: Docker
 
