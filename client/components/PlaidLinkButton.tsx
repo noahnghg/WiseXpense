@@ -17,17 +17,23 @@ export const PlaidLinkButton: React.FC<PlaidLinkButtonProps> = ({ className }) =
 
     const getLinkToken = useCallback(async () => {
         if (!authToken) return;
-        const response = await fetch("http://localhost:8080/api/plaid/link-token", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                // Assuming bearer token auth is set up or session based
-                // If using JWT from AuthContext, add header:
-                // "Authorization": `Bearer ${authToken}`
-            },
-        });
-        const data = await response.json();
-        setToken(data.link_token);
+        try {
+            const response = await fetch("http://localhost:8080/api/plaid/link-token", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${authToken}`
+                },
+            });
+            if (!response.ok) {
+                console.error("Failed to fetch link token:", response.statusText);
+                return;
+            }
+            const data = await response.json();
+            setToken(data.link_token);
+        } catch (error) {
+            console.error("Error fetching link token:", error);
+        }
     }, [authToken]);
 
     useEffect(() => {
@@ -35,16 +41,26 @@ export const PlaidLinkButton: React.FC<PlaidLinkButtonProps> = ({ className }) =
     }, [getLinkToken]);
 
     const onSuccess = useCallback(async (publicToken: string) => {
-        await fetch("http://localhost:8080/api/plaid/public-token", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ publicToken }),
-        });
-        // Redirect to dashboard or success page
-        router.push("/dashboard");
-    }, [router]);
+        if (!authToken) return;
+        try {
+            const response = await fetch("http://localhost:8080/api/plaid/public-token", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${authToken}`
+                },
+                body: JSON.stringify({ publicToken }),
+            });
+            if (!response.ok) {
+                console.error("Failed to exchange public token:", response.statusText);
+                return;
+            }
+            // Redirect to dashboard or success page
+            router.push("/dashboard");
+        } catch (error) {
+            console.error("Error exchanging public token:", error);
+        }
+    }, [router, authToken]);
 
     const { open, ready } = usePlaidLink({
         token,
