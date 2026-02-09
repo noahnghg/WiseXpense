@@ -57,7 +57,7 @@ class UserControllerTest {
         request.setEmail("test@example.com");
         request.setPassword("password");
 
-        AuthResponse response = new AuthResponse("token", "User registered successfully");
+        AuthResponse response = new AuthResponse("token", "User registered successfully", false);
 
         when(userService.register(any(RegisterRequest.class))).thenReturn(response);
 
@@ -74,7 +74,7 @@ class UserControllerTest {
         request.setEmail("test@example.com");
         request.setPassword("password");
 
-        AuthResponse response = new AuthResponse("jwt-token", "Login successful");
+        AuthResponse response = new AuthResponse("jwt-token", "Login successful", false);
 
         when(userService.login(any(LoginRequest.class))).thenReturn(response);
 

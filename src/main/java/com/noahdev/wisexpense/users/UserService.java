@@ -16,13 +16,16 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
+    private final com.noahdev.wisexpense.plaid.PlaidItemRepository plaidItemRepository;
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtils jwtUtils,
-            AuthenticationManager authenticationManager) {
+            AuthenticationManager authenticationManager,
+            com.noahdev.wisexpense.plaid.PlaidItemRepository plaidItemRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtils = jwtUtils;
         this.authenticationManager = authenticationManager;
+        this.plaidItemRepository = plaidItemRepository;
     }
 
     public AuthResponse register(RegisterRequest request) {
@@ -37,7 +40,15 @@ public class UserService {
 
         userRepository.save(user);
 
-        return new AuthResponse(null, "User registered successfully");
+        // Create UserDetails for token generation
+        var userDetails = new org.springframework.security.core.userdetails.User(
+                user.getEmail(),
+                user.getHashedPassword(),
+                java.util.Collections.emptyList());
+
+        String jwtToken = jwtUtils.generateToken(userDetails);
+
+        return new AuthResponse(jwtToken, "User registered successfully", false);
     }
 
     public AuthResponse login(LoginRequest request) {
@@ -56,6 +67,8 @@ public class UserService {
                 java.util.Collections.emptyList());
 
         String jwtToken = jwtUtils.generateToken(userDetails);
-        return new AuthResponse(jwtToken, "Login successful");
+        boolean hasPlaidItem = plaidItemRepository.existsByUserId(user.getId());
+
+        return new AuthResponse(jwtToken, "Login successful", hasPlaidItem);
     }
 }

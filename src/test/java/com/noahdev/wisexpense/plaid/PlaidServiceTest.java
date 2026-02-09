@@ -1,5 +1,6 @@
 package com.noahdev.wisexpense.plaid;
 
+import com.noahdev.wisexpense.transactions.TransactionRepository;
 import com.noahdev.wisexpense.users.User;
 import com.plaid.client.model.ItemPublicTokenExchangeResponse;
 import com.plaid.client.model.LinkTokenCreateRequest;
@@ -30,6 +31,9 @@ class PlaidServiceTest {
     private PlaidItemRepository plaidItemRepository;
 
     @Mock
+    private TransactionRepository transactionRepository;
+
+    @Mock
     private Call<LinkTokenCreateResponse> linkTokenCall;
 
     @Mock
@@ -39,7 +43,7 @@ class PlaidServiceTest {
 
     @BeforeEach
     void setUp() {
-        plaidService = new PlaidService(plaidApi, plaidItemRepository);
+        plaidService = new PlaidService(plaidApi, plaidItemRepository, transactionRepository);
     }
 
     @Test

@@ -39,6 +39,13 @@ public class PlaidController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/transactions")
+    public ResponseEntity<Void> syncTransactions(@AuthenticationPrincipal UserDetails userDetails) throws IOException {
+        User user = getUser(userDetails);
+        plaidService.syncTransactions(user);
+        return ResponseEntity.ok().build();
+    }
+
     private User getUser(UserDetails userDetails) {
         return userRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));

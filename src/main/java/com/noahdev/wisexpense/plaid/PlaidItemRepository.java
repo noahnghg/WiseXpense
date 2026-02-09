@@ -8,4 +8,6 @@ public interface PlaidItemRepository extends JpaRepository<PlaidItem, Long> {
     List<PlaidItem> findAllByUserId(Long userId);
 
     Optional<PlaidItem> findByItemId(String itemId);
+
+    boolean existsByUserId(Long userId);
 }

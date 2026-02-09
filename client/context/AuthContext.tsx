@@ -5,16 +5,17 @@ import { useRouter } from "next/navigation";
 
 interface User {
     email: string;
+    hasPlaidItem: boolean;
     // Add other user fields as needed based on your User entity
-    // For now, minimal.
 }
 
 interface AuthContextType {
     user: User | null;
     token: string | null;
-    login: (token: string, email: string) => void;
+    login: (token: string, email: string, hasPlaidItem: boolean) => void;
     logout: () => void;
     isLoading: boolean;
+    updateUser: (updates: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -29,21 +30,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Check for token on mount
         const storedToken = localStorage.getItem("token");
         const storedEmail = localStorage.getItem("userEmail");
+        const storedHasPlaidItem = localStorage.getItem("hasPlaidItem") === "true";
 
         if (storedToken && storedEmail) {
             setToken(storedToken);
-            setUser({ email: storedEmail });
+            setUser({ email: storedEmail, hasPlaidItem: storedHasPlaidItem });
         }
         setIsLoading(false);
     }, []);
 
-    const login = (newToken: string, email: string) => {
+    const login = (newToken: string, email: string, hasPlaidItem: boolean) => {
         localStorage.setItem("token", newToken);
         localStorage.setItem("userEmail", email);
+        localStorage.setItem("hasPlaidItem", String(hasPlaidItem));
         setToken(newToken);
-        setUser({ email });
-        router.push("/dashboard");
+        setUser({ email, hasPlaidItem });
+
+        if (hasPlaidItem) {
+            router.push("/dashboard");
+        } else {
+            router.push("/connect-bank");
+        }
     };
+
+    const updateUser = (updates: Partial<User>) => {
+        if (user) {
+            const newUser = { ...user, ...updates };
+            setUser(newUser);
+            if (updates.hasPlaidItem !== undefined) {
+                localStorage.setItem("hasPlaidItem", String(updates.hasPlaidItem));
+            }
+        }
+    };
+
+
 
     const logout = () => {
         localStorage.removeItem("token");
@@ -54,7 +74,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     return (
-        <AuthContext.Provider value={{ user, token, login, logout, isLoading }}>
+        <AuthContext.Provider value={{ user, token, login, logout, isLoading, updateUser }}>
             {children}
         </AuthContext.Provider>
     );
