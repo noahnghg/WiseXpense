@@ -1,0 +1,61 @@
+package com.noahdev.wisexpense.users;
+
+import com.noahdev.wisexpense.config.JwtUtils;
+import com.noahdev.wisexpense.dto.AuthResponse;
+import com.noahdev.wisexpense.dto.LoginRequest;
+import com.noahdev.wisexpense.dto.RegisterRequest;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class UserService {
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtils jwtUtils;
+    private final AuthenticationManager authenticationManager;
+
+    public AuthResponse register(RegisterRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new RuntimeException("Email already in use");
+        }
+
+        User user = new User();
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        user.setHashedPassword(passwordEncoder.encode(request.getPassword()));
+
+        userRepository.save(user);
+
+        // Auto-login after register (optional, or just return success message)
+        // For now, let's just return a success token or message
+        // To generate token we need UserDetails, so we can construct a simple one or
+        // load from DB
+        // Let's just return a placeholder or generate token manually if needed.
+
+        return new AuthResponse(null, "User registered successfully");
+    }
+
+    public AuthResponse login(LoginRequest request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()));
+
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Create UserDetails for token generation
+        var userDetails = new org.springframework.security.core.userdetails.User(
+                user.getEmail(),
+                user.getHashedPassword(),
+                java.util.Collections.emptyList());
+
+        String jwtToken = jwtUtils.generateToken(userDetails);
+        return new AuthResponse(jwtToken, "Login successful");
+    }
+}

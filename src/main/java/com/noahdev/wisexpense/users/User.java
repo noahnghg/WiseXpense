@@ -1,3 +1,5 @@
+package com.noahdev.wisexpense.users;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -9,7 +11,7 @@ import lombok.Data;
 @Entity
 @Table(name = "users")
 @Data
-public class Users {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
