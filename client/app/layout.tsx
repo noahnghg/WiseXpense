@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "@/context/AuthContext";
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
@@ -29,7 +30,9 @@ export default function RootLayout({
           <div className="absolute top-[20%] right-[-5%] w-[30%] h-[30%] bg-accent/15 rounded-full blur-[100px] opacity-60" />
           <div className="absolute bottom-[-10%] left-[20%] w-[35%] h-[35%] bg-primary/15 rounded-full blur-[120px] opacity-50" />
         </div>
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

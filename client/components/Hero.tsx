@@ -40,12 +40,12 @@ export function Hero() {
                 transition={{ duration: 0.8, delay: 0.6 }}
                 className="flex flex-col sm:flex-row gap-5"
             >
-                <Link href="/dashboard">
+                <Link href="/auth/signup">
                     <Button size="lg" className="w-44 text-lg h-14 bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 transition-all shadow-lg shadow-primary/25 border-none">
                         Sign Up
                     </Button>
                 </Link>
-                <Link href="/dashboard">
+                <Link href="/auth/login">
                     <Button size="lg" variant="ghost" className="w-44 text-lg h-14 border border-accent/50 text-accent hover:bg-accent/10 hover:border-accent hover:text-accent font-medium hover:scale-105 transition-all">
                         Login
                     </Button>
