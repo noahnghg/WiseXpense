@@ -36,7 +36,7 @@ export default function SignupPage() {
 
             const data = await res.json();
             // Auto login after registration
-            login(data.token, email);
+            login(data.token, email, data.hasPlaidItem);
         } catch (err: any) {
             setError(err.message);
         }

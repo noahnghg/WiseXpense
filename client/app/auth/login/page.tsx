@@ -33,7 +33,7 @@ export default function LoginPage() {
             }
 
             const data = await res.json();
-            login(data.token, email);
+            login(data.token, email, data.hasPlaidItem);
         } catch (err: any) {
             setError(err.message);
         }
