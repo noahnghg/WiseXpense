@@ -4,20 +4,26 @@ import com.noahdev.wisexpense.config.JwtUtils;
 import com.noahdev.wisexpense.dto.AuthResponse;
 import com.noahdev.wisexpense.dto.LoginRequest;
 import com.noahdev.wisexpense.dto.RegisterRequest;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtils jwtUtils,
+            AuthenticationManager authenticationManager) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtils = jwtUtils;
+        this.authenticationManager = authenticationManager;
+    }
 
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -30,12 +36,6 @@ public class UserService {
         user.setHashedPassword(passwordEncoder.encode(request.getPassword()));
 
         userRepository.save(user);
-
-        // Auto-login after register (optional, or just return success message)
-        // For now, let's just return a success token or message
-        // To generate token we need UserDetails, so we can construct a simple one or
-        // load from DB
-        // Let's just return a placeholder or generate token manually if needed.
 
         return new AuthResponse(null, "User registered successfully");
     }

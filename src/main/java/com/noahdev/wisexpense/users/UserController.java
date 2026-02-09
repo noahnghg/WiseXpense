@@ -3,7 +3,6 @@ package com.noahdev.wisexpense.users;
 import com.noahdev.wisexpense.dto.AuthResponse;
 import com.noahdev.wisexpense.dto.LoginRequest;
 import com.noahdev.wisexpense.dto.RegisterRequest;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,11 +14,15 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users")
-@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
     private final UserRepository userRepository; // Direct access for getAll (simple admin/test endpoint)
+
+    public UserController(UserService userService, UserRepository userRepository) {
+        this.userService = userService;
+        this.userRepository = userRepository;
+    }
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {

@@ -3,21 +3,22 @@ package com.noahdev.wisexpense.plaid;
 import com.noahdev.wisexpense.users.User;
 import com.plaid.client.request.PlaidApi;
 import com.plaid.client.model.*;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import retrofit2.Response;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class PlaidService {
 
     private final PlaidApi plaidApi;
     private final PlaidItemRepository plaidItemRepository;
+
+    public PlaidService(PlaidApi plaidApi, PlaidItemRepository plaidItemRepository) {
+        this.plaidApi = plaidApi;
+        this.plaidItemRepository = plaidItemRepository;
+    }
 
     public String createLinkToken(User user) throws IOException {
         LinkTokenCreateRequestUser userParams = new LinkTokenCreateRequestUser()

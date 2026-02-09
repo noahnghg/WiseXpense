@@ -2,7 +2,6 @@ package com.noahdev.wisexpense.plaid;
 
 import com.noahdev.wisexpense.users.User;
 import com.noahdev.wisexpense.users.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,11 +13,15 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/plaid")
-@RequiredArgsConstructor
 public class PlaidController {
 
     private final PlaidService plaidService;
     private final UserRepository userRepository;
+
+    public PlaidController(PlaidService plaidService, UserRepository userRepository) {
+        this.plaidService = plaidService;
+        this.userRepository = userRepository;
+    }
 
     @PostMapping("/link-token")
     public ResponseEntity<Map<String, String>> createLinkToken(@AuthenticationPrincipal UserDetails userDetails)
