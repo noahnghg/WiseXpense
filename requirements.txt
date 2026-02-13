@@ -171,3 +171,5 @@ wheel==0.45.1
 wrapt==2.0.1
 yarl==1.22.0
 zstandard==0.25.0
+fastapi
+
