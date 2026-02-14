@@ -1,11 +1,10 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 # from sqlalchemy.pool import NullPool
 from dotenv import load_dotenv
 import os
 
-# Load environment variables from .env (at project root, one level up)
-load_dotenv(dotenv_path="../../.env")
+# Load environment variables from .env
+load_dotenv()
 
 # Fetch variables
 USER = os.getenv("user")
@@ -19,8 +18,9 @@ DATABASE_URL = f"postgresql+psycopg2://{USER}:{PASSWORD}@{HOST}:{PORT}/{DBNAME}?
 
 # Create the SQLAlchemy engine
 engine = create_engine(DATABASE_URL)
-# Session factory — each call to SessionLocal() creates a new DB session
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+# If using Transaction Pooler or Session Pooler, we want to ensure we disable SQLAlchemy client side pooling -
+# https://docs.sqlalchemy.org/en/20/core/pooling.html#switching-pool-implementations
+# engine = create_engine(DATABASE_URL, poolclass=NullPool)
 
 # Test the connection
 try:

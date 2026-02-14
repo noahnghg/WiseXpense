@@ -3,19 +3,18 @@ from functools import lru_cache
 
 
 class Settings(BaseSettings):
-    """Application settings loaded from environment variables."""
+    """Application settings — non-DB config only (DB is handled in database.py)."""
 
-    DATABASE_URL: str
     PLAID_CLIENT_ID: str
     PLAID_SECRET: str
 
-    # Add more settings as needed
     APP_NAME: str = "WiseXpense"
     DEBUG: bool = False
 
     class Config:
         env_file = "../.env"
         env_file_encoding = "utf-8"
+        extra = "ignore"
 
 
 @lru_cache
