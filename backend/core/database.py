@@ -4,8 +4,9 @@ from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 import os
 
-# Load environment variables from .env (at project root, one level up)
-load_dotenv(dotenv_path="../../.env")
+# Load environment variables from .env (at project root)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 # Fetch variables
 USER = os.getenv("user")

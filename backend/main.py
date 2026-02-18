@@ -7,7 +7,7 @@ from core.config import get_settings
 from core.database import engine
 from models.base import Base
 from users.router import router as users_router
-from plaid.router import router as plaid_router
+from plaid_integration.router import router as plaid_router
 from transactions.router import router as transactions_router
 
 
