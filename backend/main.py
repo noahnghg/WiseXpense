@@ -6,6 +6,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from core.config import get_settings
 from core.database import engine
 from models.base import Base
+from users.model import User  # noqa: F401 — ensure model is registered
+from transactions.model import Transaction  # noqa: F401 — ensure model is registered
 from users.router import router as users_router
 from plaid_integration.router import router as plaid_router
 from transactions.router import router as transactions_router

@@ -1,5 +1,7 @@
 from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy.orm import relationship
 from models.base import Base
+
 
 class User(Base):
     __tablename__ = "users"
@@ -13,5 +15,6 @@ class User(Base):
     # Plaid integration
     plaid_access_token = Column(String, nullable=True)
     plaid_cursor = Column(String, nullable=True)
-    
-    # We will add relationships later (e.g. items, transactions)
+
+    # Relationships
+    transactions = relationship("Transaction", back_populates="user", lazy="dynamic")

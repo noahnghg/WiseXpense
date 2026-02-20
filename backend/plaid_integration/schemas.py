@@ -1,14 +1,16 @@
 from pydantic import BaseModel
 
+
 class PublicTokenExchangeRequest(BaseModel):
     public_token: str
+
 
 class LinkTokenResponse(BaseModel):
     link_token: str
 
+
 class TransactionSyncResponse(BaseModel):
-    added: list
-    modified: list
-    removed: list
-    has_more: bool
+    added_count: int
+    modified_count: int
+    removed_count: int
     next_cursor: str

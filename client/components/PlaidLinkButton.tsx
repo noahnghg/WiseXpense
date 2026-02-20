@@ -18,7 +18,7 @@ export const PlaidLinkButton: React.FC<PlaidLinkButtonProps> = ({ className }) =
     const getLinkToken = useCallback(async () => {
         if (!authToken) return;
         try {
-            const response = await fetch("http://localhost:8080/api/plaid/link-token", {
+            const response = await fetch("http://localhost:8000/api/plaid/create_link_token", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -43,7 +43,7 @@ export const PlaidLinkButton: React.FC<PlaidLinkButtonProps> = ({ className }) =
     const onSuccess = useCallback(async (publicToken: string) => {
         if (!authToken) return;
         try {
-            const response = await fetch("http://localhost:8080/api/plaid/public-token", {
+            const response = await fetch("http://localhost:8000/api/plaid/exchange_public_token", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
