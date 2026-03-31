@@ -1,16 +1,15 @@
 import type { Metadata } from "next";
-import { JetBrains_Mono } from "next/font/google";
+import { Source_Code_Pro } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from "@/context/AuthContext";
 
-const jetbrainsMono = JetBrains_Mono({
+const sourceCodePro = Source_Code_Pro({
   subsets: ["latin"],
-  variable: "--font-mono",
+  variable: "--font-source-code-pro",
 });
 
 export const metadata: Metadata = {
-  title: "WiseXpense",
-  description: "Master your financial climate",
+  title: "WiseXpense — Financial Mastery Redefined",
+  description: "The architecture of personal wealth, visualized through a lens of absolute precision.",
 };
 
 export default function RootLayout({
@@ -19,20 +18,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${jetbrainsMono.variable} antialiased min-h-screen bg-background text-foreground relative selection:bg-accent/30 font-mono`}>
-        {/* 
-            Ambient Background Gradients 
-            Increased opacity and size for better visibility on dark backgrounds
-        */}
-        <div className="fixed inset-0 -z-10 h-full w-full pointer-events-none overflow-hidden">
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/20 rounded-full blur-[120px] opacity-70" />
-          <div className="absolute top-[20%] right-[-5%] w-[30%] h-[30%] bg-accent/15 rounded-full blur-[100px] opacity-60" />
-          <div className="absolute bottom-[-10%] left-[20%] w-[35%] h-[35%] bg-primary/15 rounded-full blur-[120px] opacity-50" />
-        </div>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+    <html lang="en" className="dark scroll-smooth">
+      <head>
+        <link 
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" 
+          rel="stylesheet" 
+        />
+      </head>
+      <body className={`${sourceCodePro.variable} bg-background text-on-surface font-body selection:bg-secondary/30 antialiased`}>
+        {children}
       </body>
     </html>
   );
