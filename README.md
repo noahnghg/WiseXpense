@@ -1,4 +1,4 @@
-# WiseXpense
+# WiseXpense (in progress)
 
 WiseXpense is a self-hosted personal finance manager. It tracks spending, categorizes transactions, and provides financial insights. Your data stays local on your machine using an embedded SQLite database.
 
