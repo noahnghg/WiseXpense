@@ -28,11 +28,14 @@ def start(
     """🚀 Start WiseXpense on localhost."""
     import uvicorn
 
-    config_path = DEFAULT_DATA_DIR / "config.env"
-    if not config_path.exists():
+    try:
+        settings = get_settings()
+        if not settings.PLAID_CLIENT_ID or not settings.PLAID_SECRET:
+            raise ValueError("Keys missing")
+    except Exception:
         console.print(
-            "\n[yellow]⚠️  WiseXpense is not configured yet.[/yellow]"
-            "\n   Run [bold]wisexpense setup[/bold] first to enter your Plaid API keys.\n"
+            "\n[yellow]⚠️  WiseXpense is missing Plaid API keys.[/yellow]"
+            "\n   Run [bold]wisexpense setup[/bold] first to enter your Plaid Client ID and Secret.\n"
         )
         raise typer.Exit(1)
 
@@ -66,9 +69,14 @@ def setup():
     console.print(
         Panel(
             "[bold]Welcome to WiseXpense Setup[/bold]\n\n"
-            "You'll need a free Plaid account to connect your bank.\n"
-            "Sign up at [link=https://dashboard.plaid.com]dashboard.plaid.com[/link]\n"
-            "Then grab your API keys from the [bold]Keys[/bold] section.",
+            "Because WiseXpense is 100% private and runs locally on your machine,\n"
+            "you must use your own free Plaid developer keys to connect to real banks.\n\n"
+            "[bold cyan]How to get your free Plaid keys:[/bold cyan]\n"
+            "1. Create a free account at [link=https://dashboard.plaid.com/signup]dashboard.plaid.com[/link]\n"
+            "   (You do not need to enter a credit card or company info)\n"
+            "2. Navigate to [bold]Team Settings → Keys[/bold] in the sidebar.\n"
+            "3. Copy your [bold green]client_id[/bold green].\n"
+            "4. Reveal and copy your [bold yellow]Development secret[/bold yellow] (for real banks) or Sandbox secret (for testing).",
             title="⚙️  Setup",
             border_style="cyan",
         )
@@ -90,7 +98,7 @@ def setup():
     # Plaid Secret
     default_secret = getattr(existing, "PLAID_SECRET", "") if existing else ""
     plaid_secret = Prompt.ask(
-        "🔐 Plaid Secret (Development key)",
+        "🔐 Plaid Secret (Paste your Development secret to connect real banks)",
         default=default_secret if default_secret else None,
     )
 

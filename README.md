@@ -17,17 +17,19 @@ source .venv/bin/activate
 pip install -e .
 ```
 
-## Configuration
+## 🔑 Configuration (One-Time Setup)
 
-To connect your bank, you must create a free Plaid developer account.
+Because WiseXpense is 100% private and runs locally on your machine, you must use your own free Plaid developer keys to connect to real banks.
 
-1. Create an account at [dashboard.plaid.com](https://dashboard.plaid.com).
-2. Retrieve your `client_id` and `secret` (Development environment) from the Keys section. 
-3. Run the setup CLI tool to save these credentials locally:
+1. Create a free account at [dashboard.plaid.com/signup](https://dashboard.plaid.com/signup) (no credit card required).
+2. Navigate to **Team Settings → Keys** in your Plaid dashboard.
+3. Run the interactive setup wizard in your terminal:
+   ```bash
+   wisexpense setup
+   ```
+4. Paste your `client_id` and your **Development** `secret` when prompted by the wizard.
 
-```bash
-wisexpense setup
-```
+*Note: The "Development" secret allows you to connect up to 100 real bank accounts for free. If you just want to test the UI with fake data, use the "Sandbox" secret.*
 
 ## Usage
 
