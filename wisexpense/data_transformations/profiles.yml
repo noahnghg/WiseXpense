@@ -1,0 +1,10 @@
+wisexpense_profile:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: ~/.wisexpense/wisexpense_analytical.duckdb
+      # You can configure extensions and other settings here later
+      # extensions:
+      #   - httpfs
+      #   - parquet
