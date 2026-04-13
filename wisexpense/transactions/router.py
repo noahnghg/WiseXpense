@@ -5,8 +5,8 @@ from collections.abc import Generator
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
-from wisexpense.core.database import SessionLocal
-from wisexpense.transactions import service, schemas
+from wisexpense.core.database import SessionLocal, get_duckdb_conn
+from wisexpense.transactions import service, schemas, analytics_service
 
 router = APIRouter()
 
@@ -18,6 +18,14 @@ def get_db() -> Generator[Session, None, None]:
         yield db
     finally:
         db.close()
+
+
+def get_olap_db():
+    conn = get_duckdb_conn()
+    try:
+        yield conn
+    finally:
+        conn.close()
 
 
 @router.get("/", response_model=schemas.TransactionListResponse)
@@ -49,14 +57,15 @@ def list_transactions(
     }
 
 
-@router.get("/summary", response_model=schemas.TransactionSummaryResponse)
+@router.get("/summary")
 def get_summary(
     start_date: Optional[date] = Query(None, description="Summary from date"),
     end_date: Optional[date] = Query(None, description="Summary to date"),
-    db: Session = Depends(get_db),
+    conn = Depends(get_olap_db), # Analytical connection via DuckDB
 ):
-    """Get spending/income summary with category breakdown."""
-    return service.get_summary(db, start_date, end_date)
+    """Get spending/income summary with category breakdown directly from OLAP."""
+    return analytics_service.get_analytical_summary(conn, start_date, end_date)
+
 
 
 @router.get("/{transaction_id}", response_model=schemas.TransactionResponse)

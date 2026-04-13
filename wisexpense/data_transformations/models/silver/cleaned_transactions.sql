@@ -15,11 +15,13 @@ SELECT
     iso_currency_code,
     CAST(pending AS BOOLEAN) AS is_pending,
     
-    -- Extract category from the stringified dict. Since it was stringified, we can do a simple extraction if necessary, 
-    -- but usually DuckDB's json extract or string parsing is needed. 
-    -- Because pandas dicts stringified look like `{'primary': 'FOOD_AND_DRINK', 'detailed': 'FOOD_AND_DRINK_COFFEE'}`
-    -- we can use robust regex, or since it's an MVP, let's just grab the whole string for now or do a generic replace.
-    personal_finance_category
+    -- Extract category from the stringified dict.
+    -- Python dictionary is stringified using `str()`, so it looks like `{'primary': 'FOOD_AND_DRINK', 'detailed': '...'}`
+    -- We'll use regex to extract the primary category value.
+    COALESCE(
+        regexp_extract(personal_finance_category, '''primary'[^'"]+['"]([^'"]+)['"]', 1),
+        'UNCATEGORIZED'
+    ) AS category
     
 FROM raw
 WHERE transaction_id IS NOT NULL

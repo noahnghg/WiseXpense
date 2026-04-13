@@ -17,12 +17,12 @@ source .venv/bin/activate
 pip install -e .
 ```
 
-## 🔑 Configuration (One-Time Setup)
+## Configuration (One-Time Setup)
 
 Because WiseXpense is 100% private and runs locally on your machine, you must use your own free Plaid developer keys to connect to real banks.
 
 1. Create a free account at [dashboard.plaid.com/signup](https://dashboard.plaid.com/signup) (no credit card required).
-2. Navigate to **Team Settings → Keys** in your Plaid dashboard.
+2. Navigate to **Team Settings -> Keys** in your Plaid dashboard.
 3. Run the interactive setup wizard in your terminal:
    ```bash
    wisexpense setup
@@ -43,11 +43,14 @@ Other available commands:
 
 - `wisexpense info`: Check configuration and bank connection status
 - `wisexpense reset`: Delete all local transaction data and drop the database
+- `dbt run`: Run the analytical data pipeline (make sure your virtual environment is active)
 
 ## Architecture
 
 - **Backend**: Python, FastAPI, SQLAlchemy
-- **Database**: SQLite (stored at `~/.wisexpense/wisexpense.db`)
+- **Data Engineering**: dbt (Data Build Tool) for transformations
+- **Database (Transactional)**: SQLite (stored at `~/.wisexpense/wisexpense.db`)
+- **Database (Analytical)**: DuckDB (stored at `~/.wisexpense/wisexpense_analytical.duckdb`)
 - **Frontend**: React, Vite (bundled as static files within the Python package)
 - **Integration**: Plaid API
 
