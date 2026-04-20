@@ -1,36 +1,22 @@
 from datetime import date, datetime, timezone
-
 from sqlalchemy import Column, Integer, String, Float, Boolean, Date, DateTime
-
 from wisexpense.models.base import Base
-
 
 class Transaction(Base):
     __tablename__ = "transactions"
 
     id = Column(Integer, primary_key=True, index=True)
-    plaid_transaction_id = Column(String, unique=True, index=True, nullable=False)
+    provider_transaction_id = Column(String, unique=True, index=True, nullable=False)
+    account_id = Column(String, nullable=False, default="default")
 
     # Core transaction data
-    name = Column(String, nullable=False)
-    merchant_name = Column(String, nullable=True)
-    amount = Column(Float, nullable=False)  # Plaid: positive = expense, negative = income
+    description = Column(String, nullable=False)
+    payee = Column(String, nullable=True)
+    amount = Column(Float, nullable=False)
     date = Column(Date, nullable=False)
-    authorized_date = Column(Date, nullable=True)
 
-    # Categorization
-    category_primary = Column(String, nullable=True)    # e.g. "FOOD_AND_DRINK"
-    category_detailed = Column(String, nullable=True)   # e.g. "FOOD_AND_DRINK_GROCERIES"
+    currency = Column(String, nullable=True)
 
-    # Payment info
-    payment_channel = Column(String, nullable=True)     # "online", "in store", "other"
-    iso_currency_code = Column(String, nullable=True)   # USD, CAD, etc. — determined by Plaid
-    pending = Column(Boolean, default=False)
-
-    # Branding
-    logo_url = Column(String, nullable=True)
-
-    # Timestamps
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = Column(
         DateTime,

@@ -18,17 +18,13 @@ class Settings(BaseSettings):
     # Data directory
     DATA_DIR: str = str(DEFAULT_DATA_DIR)
 
-    # Plaid
-    PLAID_CLIENT_ID: str = ""
-    PLAID_SECRET: str = ""
-    PLAID_ENV: str = "development"  # sandbox | development | production
-    PLAID_COUNTRY_CODES: str = "US,CA"  # Comma-separated country codes
-    PLAID_PRODUCTS: str = "transactions"  # Comma-separated products
-
-    # Plaid state (stored after linking)
-    PLAID_ACCESS_TOKEN: str = ""
-    PLAID_ITEM_ID: str = ""
-    PLAID_CURSOR: str = ""
+    # SimpleFIN
+    SIMPLEFIN_SETUP_TOKEN: str = ""
+    SIMPLEFIN_ACCESS_URL: str = ""
+    
+    # AI Agent
+    AI_PROVIDER: str = "gemini" # gemini | claude | openai | ollama
+    AI_API_KEY: str = ""
 
     # Server
     HOST: str = "127.0.0.1"

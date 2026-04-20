@@ -1,94 +1,56 @@
-from datetime import date
+from datetime import date, datetime, timezone
 from typing import Optional
 
 from sqlalchemy.orm import Session
-from plaid.model.transactions_sync_request import TransactionsSyncRequest
 
-from wisexpense.plaid_integration.client import get_plaid_client
+from wisexpense.simplefin_integration.client import fetch_accounts_and_transactions
 from wisexpense.transactions import repository
-from wisexpense.core.config import get_settings, save_config
 
 
 def sync_and_persist(db: Session) -> dict:
     """
-    Call Plaid /transactions/sync with cursor pagination,
-    then persist all added/modified/removed transactions to the DB.
-    Returns counts of added, modified, and removed transactions.
+    Call SimpleFIN to fetch accounts and transactions,
+    then persist all transactions to the DB.
     """
-    settings = get_settings()
-    access_token = settings.PLAID_ACCESS_TOKEN
-    cursor = settings.PLAID_CURSOR or ""
-    client = get_plaid_client()
-
-    all_added = []
-    all_modified = []
-    all_removed = []
-
-    has_more = True
-    while has_more:
-        request = TransactionsSyncRequest(
-            access_token=access_token,
-            cursor=cursor,
-            count=100,
-        )
-        response = client.transactions_sync(request)
-
-        all_added.extend(_plaid_txns_to_dicts(response["added"]))
-        all_modified.extend(_plaid_txns_to_dicts(response["modified"]))
-        all_removed.extend(response["removed"])
-
-        has_more = response["has_more"]
-        cursor = response["next_cursor"]
-
-    # Persist to database
-    added_count = repository.upsert_from_plaid(db, all_added)
-    modified_count = repository.upsert_from_plaid(db, all_modified)
-
-    removed_ids = [
-        r.get("transaction_id", r) if isinstance(r, dict) else str(r)
-        for r in all_removed
-    ]
-    removed_count = repository.remove_by_plaid_ids(db, removed_ids)
-
-    # Update cursor in config
-    save_config(PLAID_CURSOR=cursor)
+    try:
+        data = fetch_accounts_and_transactions()
+    except Exception as e:
+        raise Exception(f"SimpleFIN bridge error: {e}")
+    
+    all_txns = []
+    for account in data.get("accounts", []):
+        account_id = account.get("id")
+        currency = account.get("currency", "USD")
+        
+        for txn in account.get("transactions", []):
+            try:
+                txn_date = datetime.fromtimestamp(int(txn.get("posted", 0)), tz=timezone.utc).date()
+            except:
+                txn_date = date.today()
+                
+            amount_str = txn.get("amount", "0")
+            try:
+                amount = float(amount_str)
+            except:
+                amount = 0.0
+                
+            all_txns.append({
+                "provider_transaction_id": txn.get("id"),
+                "account_id": account_id,
+                "description": txn.get("description", "Unknown"),
+                "payee": txn.get("payee", None),
+                "amount": amount,
+                "date": txn_date,
+                "currency": currency,
+            })
+            
+    upserted_count = repository.upsert_from_provider(db, all_txns)
     db.commit()
 
     return {
-        "added_count": added_count,
-        "modified_count": modified_count,
-        "removed_count": removed_count,
-        "next_cursor": cursor,
+        "sync_count": len(all_txns),
+        "upserted_count": upserted_count,
     }
-
-
-def _plaid_txns_to_dicts(plaid_txns: list) -> list[dict]:
-    """Convert Plaid transaction objects to plain dicts for repository consumption."""
-    result = []
-    for txn in plaid_txns:
-        if hasattr(txn, "to_dict"):
-            result.append(txn.to_dict())
-        elif isinstance(txn, dict):
-            result.append(txn)
-        else:
-            pfc = getattr(txn, "personal_finance_category", None)
-            result.append({
-                "transaction_id": getattr(txn, "transaction_id", None),
-                "name": getattr(txn, "name", "Unknown"),
-                "merchant_name": getattr(txn, "merchant_name", None),
-                "amount": getattr(txn, "amount", 0),
-                "date": getattr(txn, "date", None),
-                "authorized_date": getattr(txn, "authorized_date", None),
-                "personal_finance_category": {
-                    "primary": getattr(pfc, "primary", None),
-                    "detailed": getattr(pfc, "detailed", None),
-                } if pfc else None,
-                "payment_channel": getattr(txn, "payment_channel", None),
-                "iso_currency_code": getattr(txn, "iso_currency_code", None),
-                "pending": getattr(txn, "pending", False),
-                "logo_url": getattr(txn, "logo_url", None),
-            })
-    return result
 
 
 def list_transactions(
@@ -97,16 +59,12 @@ def list_transactions(
     page_size: int = 50,
     start_date: Optional[date] = None,
     end_date: Optional[date] = None,
-    category: Optional[str] = None,
-    min_amount: Optional[float] = None,
-    max_amount: Optional[float] = None,
     search: Optional[str] = None,
 ) -> tuple[list, int]:
     """List transactions with filters and pagination."""
     return repository.get_all(
         db, page, page_size,
-        start_date, end_date, category,
-        min_amount, max_amount, search,
+        start_date, end_date, search
     )
 
 
@@ -128,5 +86,5 @@ def get_summary(
     start_date: Optional[date] = None,
     end_date: Optional[date] = None,
 ) -> dict:
-    """Get spending summary with category breakdown."""
+    """Get basic spending summary."""
     return repository.get_spending_summary(db, start_date, end_date)

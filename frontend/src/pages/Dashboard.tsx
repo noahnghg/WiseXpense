@@ -5,6 +5,7 @@ import {
 } from "recharts";
 import { TrendingUp, TrendingDown, DollarSign, CreditCard, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { getTransactionSummary, getTransactions, type TransactionSummaryResponse, type Transaction } from "../api";
+import AgentChat from "../components/AgentChat";
 import "./Dashboard.css";
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -76,7 +77,7 @@ export default function Dashboard() {
     );
   }
 
-  const pieData = summary.category_breakdown.slice(0, 8).map((cat) => ({
+  const pieData = (summary.category_breakdown || []).slice(0, 8).map((cat) => ({
     name: formatCategory(cat.category),
     value: Math.round(cat.total * 100) / 100,
     color: CATEGORY_COLORS[cat.category] || "#636e72",
@@ -93,7 +94,7 @@ export default function Dashboard() {
       <div className="summary-cards">
         <div className="summary-card spending">
           <div className="card-icon-wrap spending-icon">
-            <TrendingUp size={20} />
+            <TrendingDown size={20} />
           </div>
           <div className="card-content">
             <span className="card-label">Total Spending</span>
@@ -103,7 +104,7 @@ export default function Dashboard() {
 
         <div className="summary-card income">
           <div className="card-icon-wrap income-icon">
-            <TrendingDown size={20} />
+            <TrendingUp size={20} />
           </div>
           <div className="card-content">
             <span className="card-label">Total Income</span>
@@ -134,7 +135,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Charts Row */}
+      {pieData.length > 0 && (
       <div className="charts-row">
         {/* Category Breakdown Pie */}
         <div className="chart-card">
@@ -186,7 +187,7 @@ export default function Dashboard() {
           <div className="chart-container">
             <ResponsiveContainer width="100%" height={320}>
               <BarChart
-                data={summary.category_breakdown.slice(0, 6).map((cat) => ({
+                data={(summary.category_breakdown || []).slice(0, 6).map((cat) => ({
                   name: formatCategory(cat.category).split(" ").slice(0, 2).join(" "),
                   amount: Math.round(cat.total * 100) / 100,
                   fill: CATEGORY_COLORS[cat.category] || "#636e72",
@@ -208,7 +209,7 @@ export default function Dashboard() {
                   formatter={(value: any) => formatCurrency(Number(value))}
                 />
                 <Bar dataKey="amount" radius={[0, 6, 6, 0]} barSize={24}>
-                  {summary.category_breakdown.slice(0, 6).map((cat, i) => (
+                  {(summary.category_breakdown || []).slice(0, 6).map((cat, i) => (
                     <Cell key={i} fill={CATEGORY_COLORS[cat.category] || "#636e72"} />
                   ))}
                 </Bar>
@@ -217,45 +218,49 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+      )}
 
-      {/* Recent Transactions */}
-      <div className="recent-section">
-        <div className="section-header">
-          <h3>Recent Transactions</h3>
-          <a href="/transactions" className="view-all">View all →</a>
+      {/* Agent & Recent Transactions Row */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem", marginTop: "2rem" }}>
+        
+        {/* Agent Chat */}
+        <div className="agent-section" style={{ minWidth: 0 }}>
+          <AgentChat />
         </div>
-        <div className="txn-list">
-          {recentTxns.map((txn) => (
-            <div key={txn.id} className="txn-row">
-              <div className="txn-left">
-                {txn.logo_url ? (
-                  <img src={txn.logo_url} alt="" className="txn-logo" />
-                ) : (
+
+        {/* Recent Transactions */}
+        <div className="recent-section" style={{ marginTop: 0, minWidth: 0 }}>
+          <div className="section-header">
+            <h3>Recent Transactions</h3>
+            <a href="/transactions" className="view-all">View all →</a>
+          </div>
+          <div className="txn-list">
+            {recentTxns.map((txn) => (
+              <div key={txn.id} className="txn-row">
+                <div className="txn-left">
                   <div className="txn-logo-placeholder">
-                    {(txn.merchant_name || txn.name).charAt(0).toUpperCase()}
+                    {(txn.payee || txn.description).charAt(0).toUpperCase()}
                   </div>
-                )}
-                <div className="txn-info">
-                  <span className="txn-name">{txn.merchant_name || txn.name}</span>
-                  <span className="txn-category">
-                    {txn.category_primary ? formatCategory(txn.category_primary) : "Uncategorized"}
+                  <div className="txn-info">
+                    <span className="txn-name">{txn.payee || txn.description}</span>
+                  </div>
+                </div>
+                <div className="txn-right">
+                  <span className={`txn-amount ${txn.amount > 0 ? "income" : "expense"}`}>
+                    {txn.amount > 0 ? (
+                      <ArrowUpRight size={14} />
+                    ) : (
+                      <ArrowDownRight size={14} />
+                    )}
+                    {formatCurrency(Math.abs(txn.amount), txn.currency || undefined)}
                   </span>
+                  <span className="txn-date">{new Date(txn.date).toLocaleDateString("en-CA", { month: "short", day: "numeric" })}</span>
                 </div>
               </div>
-              <div className="txn-right">
-                <span className={`txn-amount ${txn.amount < 0 ? "income" : "expense"}`}>
-                  {txn.amount < 0 ? (
-                    <ArrowDownRight size={14} />
-                  ) : (
-                    <ArrowUpRight size={14} />
-                  )}
-                  {formatCurrency(Math.abs(txn.amount), txn.iso_currency_code || undefined)}
-                </span>
-                <span className="txn-date">{new Date(txn.date).toLocaleDateString("en-CA", { month: "short", day: "numeric" })}</span>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
+
       </div>
     </div>
   );

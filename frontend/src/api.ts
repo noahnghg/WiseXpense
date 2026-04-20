@@ -2,18 +2,13 @@ const API_BASE = "/api";
 
 export interface Transaction {
   id: number;
-  plaid_transaction_id: string;
-  name: string;
-  merchant_name: string | null;
+  provider_transaction_id: string;
+  account_id: string;
+  description: string;
+  payee: string | null;
   amount: number;
   date: string;
-  authorized_date: string | null;
-  category_primary: string | null;
-  category_detailed: string | null;
-  payment_channel: string | null;
-  iso_currency_code: string | null;
-  pending: boolean;
-  logo_url: string | null;
+  currency: string | null;
   created_at: string | null;
   updated_at: string | null;
 }
@@ -41,50 +36,41 @@ export interface TransactionSummaryResponse {
   end_date: string | null;
 }
 
-export interface PlaidStatus {
+export interface SimpleFINStatus {
   configured: boolean;
   connected: boolean;
-  environment: string;
 }
 
 export interface SyncResult {
-  added_count: number;
-  modified_count: number;
-  removed_count: number;
-  next_cursor: string;
+  sync_count: number;
+  upserted_count: number;
 }
 
-// --- Plaid ---
+// --- SimpleFIN ---
 
-export async function getPlaidStatus(): Promise<PlaidStatus> {
-  const res = await fetch(`${API_BASE}/plaid/status`);
-  if (!res.ok) throw new Error("Failed to get Plaid status");
+export async function getSimpleFINStatus(): Promise<SimpleFINStatus> {
+  const res = await fetch(`${API_BASE}/simplefin/status`);
+  if (!res.ok) throw new Error("Failed to get SimpleFIN status");
   return res.json();
 }
 
-export async function createLinkToken(): Promise<string> {
-  const res = await fetch(`${API_BASE}/plaid/create_link_token`, {
-    method: "POST",
-  });
-  if (!res.ok) throw new Error("Failed to create link token");
-  const data = await res.json();
-  return data.link_token;
-}
-
-export async function exchangePublicToken(publicToken: string): Promise<void> {
-  const res = await fetch(`${API_BASE}/plaid/exchange_public_token`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ public_token: publicToken }),
-  });
-  if (!res.ok) throw new Error("Failed to exchange token");
-}
-
 export async function syncTransactions(): Promise<SyncResult> {
-  const res = await fetch(`${API_BASE}/plaid/transactions/sync`, {
+  const res = await fetch(`${API_BASE}/simplefin/transactions/sync`, {
     method: "POST",
   });
   if (!res.ok) throw new Error("Failed to sync transactions");
+  return res.json();
+}
+
+// --- Agent ---
+
+export async function chatWithAgent(message: string): Promise<{response: string}> {
+  const res = await fetch(`${API_BASE}/agent/chat`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message }),
+  });
+  if (!res.ok) throw new Error("Failed to chat with agent");
   return res.json();
 }
 
@@ -103,7 +89,6 @@ export async function getTransactions(params?: {
   if (params?.page_size) searchParams.set("page_size", String(params.page_size));
   if (params?.start_date) searchParams.set("start_date", params.start_date);
   if (params?.end_date) searchParams.set("end_date", params.end_date);
-  if (params?.category) searchParams.set("category", params.category);
   if (params?.search) searchParams.set("search", params.search);
 
   const query = searchParams.toString();

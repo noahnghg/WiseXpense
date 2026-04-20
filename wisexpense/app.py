@@ -11,8 +11,9 @@ from wisexpense.core.database import engine
 from wisexpense.models.base import Base
 from wisexpense.transactions.model import Transaction  # noqa: F401 — register model
 from wisexpense.transactions.router import router as transactions_router
-from wisexpense.plaid_integration.router import router as plaid_router
+from wisexpense.simplefin_integration.router import router as simplefin_router
 from wisexpense.analytics.router import router as analytics_router
+from wisexpense.agentic.router import router as agent_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -37,7 +38,8 @@ def create_app() -> FastAPI:
     )
 
     # --- API routers ---
-    app.include_router(plaid_router, prefix="/api/plaid", tags=["Plaid"])
+    app.include_router(simplefin_router, prefix="/api/simplefin", tags=["SimpleFIN"])
+    app.include_router(agent_router, prefix="/api/agent", tags=["Agent"])
     app.include_router(transactions_router, prefix="/api/transactions", tags=["Transactions"])
     app.include_router(analytics_router, prefix="/api/analytics", tags=["Analytics"])
 

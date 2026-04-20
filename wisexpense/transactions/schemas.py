@@ -5,18 +5,13 @@ from pydantic import BaseModel
 
 class TransactionResponse(BaseModel):
     id: int
-    plaid_transaction_id: str
-    name: str
-    merchant_name: Optional[str] = None
+    provider_transaction_id: str
+    account_id: str
+    description: str
+    payee: Optional[str] = None
     amount: float
     date: date
-    authorized_date: Optional[date] = None
-    category_primary: Optional[str] = None
-    category_detailed: Optional[str] = None
-    payment_channel: Optional[str] = None
-    iso_currency_code: Optional[str] = None
-    pending: bool = False
-    logo_url: Optional[str] = None
+    currency: Optional[str] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
@@ -42,6 +37,6 @@ class TransactionSummaryResponse(BaseModel):
     total_income: float
     net: float
     transaction_count: int
-    category_breakdown: list[CategoryBreakdown]
+    category_breakdown: Optional[list[CategoryBreakdown]] = None
     start_date: Optional[date] = None
     end_date: Optional[date] = None

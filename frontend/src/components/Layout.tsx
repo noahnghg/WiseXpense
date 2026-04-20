@@ -13,7 +13,7 @@ export default function Layout() {
     setSyncMessage("");
     try {
       const result = await syncTransactions();
-      setSyncMessage(`Synced: +${result.added_count} added, ${result.modified_count} modified, ${result.removed_count} removed`);
+      setSyncMessage(`Synced: ${result.sync_count} total, ${result.upserted_count} upserted`);
       // Trigger page reload to show new data
       window.dispatchEvent(new Event("wisexpense:sync"));
       setTimeout(() => setSyncMessage(""), 4000);

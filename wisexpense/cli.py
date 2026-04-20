@@ -1,15 +1,18 @@
 import os
 import secrets
 import webbrowser
+import time
 from pathlib import Path
 
 import typer
 from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import Prompt
+from rich.progress import Progress, SpinnerColumn, TextColumn
 
 from wisexpense import __version__
 from wisexpense.core.config import DEFAULT_DATA_DIR, save_config, get_settings
+from wisexpense.simplefin_integration.client import claim_setup_token
 
 app = typer.Typer(
     name="wisexpense",
@@ -30,23 +33,40 @@ def start(
 
     try:
         settings = get_settings()
-        if not settings.PLAID_CLIENT_ID or not settings.PLAID_SECRET:
+        if not settings.SIMPLEFIN_ACCESS_URL and not settings.SIMPLEFIN_SETUP_TOKEN:
             raise ValueError("Keys missing")
     except Exception:
         console.print(
-            "\n[yellow]⚠️  WiseXpense is missing Plaid API keys.[/yellow]"
-            "\n   Run [bold]wisexpense setup[/bold] first to enter your Plaid Client ID and Secret.\n"
+            "\n[yellow]⚠️  WiseXpense is missing SimpleFIN or AI keys.[/yellow]"
+            "\n   Run [bold]wisexpense setup[/bold] first to configure the app.\n"
         )
         raise typer.Exit(1)
 
     url = f"http://{host}:{port}"
+    
+    # Simulate Brain startup sequence
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+        transient=True,
+    ) as progress:
+        task1 = progress.add_task("[cyan]Initializing Agentic Brain...", total=None)
+        time.sleep(1)
+        progress.update(task1, description="[green]Connecting to SimpleFIN Bridge...")
+        time.sleep(1.5)
+        progress.update(task1, description="[yellow]Pulling your real-time financial data...")
+        time.sleep(2)
+        progress.update(task1, description="[magenta]Analyzing spending patterns...")
+        time.sleep(1.5)
+
     console.print(
         Panel(
             f"[bold green]WiseXpense v{__version__}[/bold green]\n\n"
+            f"🤖 Agentic Base: {settings.AI_PROVIDER.title()}\n"
             f"🌐 Running at [link={url}]{url}[/link]\n"
             f"📁 Data directory: {DEFAULT_DATA_DIR}\n\n"
             f"[dim]Press Ctrl+C to stop[/dim]",
-            title="🏦 WiseXpense",
+            title="🏦 WiseXpense initialized",
             border_style="green",
         )
     )
@@ -65,76 +85,81 @@ def start(
 
 @app.command()
 def setup():
-    """⚙️  Configure WiseXpense (Plaid API keys, etc.)."""
+    """⚙️  Configure WiseXpense (SimpleFIN + Agent LLM)."""
     console.print(
         Panel(
             "[bold]Welcome to WiseXpense Setup[/bold]\n\n"
             "Because WiseXpense is 100% private and runs locally on your machine,\n"
-            "you must use your own free Plaid developer keys to connect to real banks.\n\n"
-            "[bold cyan]How to get your free Plaid keys:[/bold cyan]\n"
-            "1. Create a free account at [link=https://dashboard.plaid.com/signup]dashboard.plaid.com[/link]\n"
-            "   (You do not need to enter a credit card or company info)\n"
-            "2. Navigate to [bold]Team Settings → Keys[/bold] in the sidebar.\n"
-            "3. Copy your [bold green]client_id[/bold green].\n"
-            "4. Reveal and copy your [bold yellow]Development secret[/bold yellow] (for real banks) or Sandbox secret (for testing).",
+            "you must use your own SimpleFIN token to connect to banks securely.\n\n"
+            "[bold cyan]How to get your free SimpleFIN token:[/bold cyan]\n"
+            "1. Visit [link=https://bridge.simplefin.org/]bridge.simplefin.org[/link]\n"
+            "2. Connect your bank and copy your [bold green]Setup Token[/bold green].\n",
             title="⚙️  Setup",
             border_style="cyan",
         )
     )
 
-    # Get existing settings for defaults
     try:
         existing = get_settings()
     except Exception:
         existing = None
 
-    # Plaid Client ID
-    default_id = getattr(existing, "PLAID_CLIENT_ID", "") if existing else ""
-    plaid_client_id = Prompt.ask(
-        "\n🔑 Plaid Client ID",
-        default=default_id if default_id else None,
+    default_token = getattr(existing, "SIMPLEFIN_SETUP_TOKEN", "") if existing else ""
+    simplefin_token = Prompt.ask(
+        "\n🔑 SimpleFIN Setup Token",
+        default=default_token if default_token else None,
     )
 
-    # Plaid Secret
-    default_secret = getattr(existing, "PLAID_SECRET", "") if existing else ""
-    plaid_secret = Prompt.ask(
-        "🔐 Plaid Secret (Paste your Development secret to connect real banks)",
-        default=default_secret if default_secret else None,
-    )
+    # Claim the access URL from the setup token right away
+    access_url = getattr(existing, "SIMPLEFIN_ACCESS_URL", "") if existing else ""
+    if simplefin_token and simplefin_token != default_token:
+        try:
+            with console.status("[bold green]Claiming Access URL from Setup Token..."):
+                access_url = claim_setup_token(simplefin_token)
+            console.print("[green]✅ SimpleFIN Access URL claimed successfully![/green]\n")
+        except Exception as e:
+            console.print(f"[red]❌ Failed to exchange Setup Token: {e}[/red]\n")
+            raise typer.Exit(1)
 
-    # Plaid Environment
-    default_env = getattr(existing, "PLAID_ENV", "development") if existing else "development"
-    plaid_env = Prompt.ask(
-        "🌍 Plaid Environment",
-        choices=["sandbox", "development", "production"],
-        default=default_env,
+    console.print(
+        Panel(
+            "[bold magenta]🤖 Configure AI Agent[/bold magenta]\n\n"
+            "WiseXpense uses LLMs to intelligently analyze your spending and answer questions.\n"
+            "We recommend Google Gemini, but you can use Claude, OpenAI, or a local Ollama instance.",
+            border_style="magenta",
+        )
     )
-
-    # Country codes
-    default_countries = getattr(existing, "PLAID_COUNTRY_CODES", "US,CA") if existing else "US,CA"
-    country_codes = Prompt.ask(
-        "🏳️  Country codes (comma-separated)",
-        default=default_countries,
+    default_provider = getattr(existing, "AI_PROVIDER", "gemini") if existing else "gemini"
+    ai_provider = Prompt.ask(
+        "🧠 Choose AI Provider",
+        choices=["gemini", "claude", "openai", "ollama"],
+        default=default_provider,
     )
+    
+    default_key = getattr(existing, "AI_API_KEY", "") if existing else ""
+    if ai_provider != "ollama":
+        ai_key = Prompt.ask(
+            f"🔑 {ai_provider.title()} API Key",
+            default=default_key if default_key else None,
+            password=True
+        )
+    else:
+        ai_key = "ollama"
 
-    # Create data directory
     DEFAULT_DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-    # Save config
     save_config(
-        PLAID_CLIENT_ID=plaid_client_id,
-        PLAID_SECRET=plaid_secret,
-        PLAID_ENV=plaid_env,
-        PLAID_COUNTRY_CODES=country_codes,
-        PLAID_PRODUCTS="transactions",
+        SIMPLEFIN_SETUP_TOKEN=simplefin_token,
+        SIMPLEFIN_ACCESS_URL=access_url,
+        AI_PROVIDER=ai_provider,
+        AI_API_KEY=ai_key,
     )
 
     console.print(
         Panel(
             f"[bold green]✅ Configuration saved![/bold green]\n\n"
             f"📁 Config file: {DEFAULT_DATA_DIR / 'config.env'}\n"
-            f"🏦 Environment: {plaid_env}\n"
-            f"🌍 Countries: {country_codes}\n\n"
+            f"🧠 Agent: {ai_provider.title()}\n\n"
             f"Run [bold]wisexpense start[/bold] to launch the app!",
             title="✅ Done",
             border_style="green",
@@ -157,12 +182,16 @@ def reset(
             console.print("[dim]Cancelled.[/dim]")
             raise typer.Exit(0)
 
-    db_path = DEFAULT_DATA_DIR / "wisexpense.db"
-    if db_path.exists():
-        db_path.unlink()
-        console.print("[green]✅ Database reset successfully.[/green]")
-    else:
-        console.print("[dim]No database found — nothing to reset.[/dim]")
+    db_paths = [
+        DEFAULT_DATA_DIR / "wisexpense.db",
+        DEFAULT_DATA_DIR / "wisexpense_analytical.duckdb"
+    ]
+    
+    for p in db_paths:
+        if p.exists():
+            p.unlink()
+            
+    console.print("[green]✅ Databases reset successfully.[/green]")
 
 
 @app.command()
@@ -177,10 +206,9 @@ def info():
                 f"[bold]WiseXpense v{__version__}[/bold]\n\n"
                 f"📁 Data directory: {DEFAULT_DATA_DIR}\n"
                 f"🗄️  Database: {'exists' if db_path.exists() else 'not created yet'}\n"
-                f"🏦 Plaid environment: {settings.PLAID_ENV}\n"
-                f"🔑 Plaid configured: {'✅' if settings.PLAID_CLIENT_ID else '❌'}\n"
-                f"🔗 Bank connected: {'✅' if settings.PLAID_ACCESS_TOKEN else '❌'}\n"
-                f"🌍 Country codes: {settings.PLAID_COUNTRY_CODES}",
+                f"🏦 SimpleFIN configured: {'✅' if settings.SIMPLEFIN_SETUP_TOKEN else '❌'}\n"
+                f"🔗 SimpleFIN Access: {'✅' if settings.SIMPLEFIN_ACCESS_URL else '❌'}\n"
+                f"🧠 AI Agent: {settings.AI_PROVIDER.title()}",
                 title="ℹ️  Info",
                 border_style="blue",
             )

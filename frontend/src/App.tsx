@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getPlaidStatus } from "./api";
+import { getSimpleFINStatus } from "./api";
 import ConnectBank from "./pages/ConnectBank";
 import Dashboard from "./pages/Dashboard";
 import Transactions from "./pages/Transactions";
@@ -12,7 +12,7 @@ function App() {
 
   const checkStatus = async () => {
     try {
-      const status = await getPlaidStatus();
+      const status = await getSimpleFINStatus();
       setConnected(status.connected);
     } catch {
       setConnected(false);
@@ -45,7 +45,7 @@ function App() {
       <Route path="/" element={
         connected ? <Navigate to="/dashboard" replace /> : <Navigate to="/connect" replace />
       } />
-      <Route path="/connect" element={<ConnectBank onConnected={() => { setConnected(true); }} />} />
+      <Route path="/connect" element={<ConnectBank />} />
       <Route element={<Layout />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/transactions" element={<Transactions />} />
