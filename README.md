@@ -4,46 +4,47 @@ WiseXpense is a self-hosted, agentic personal finance manager. It tracks spendin
 
 It uses SimpleFIN Bridge to securely connect read-only bank accounts. Because it is self-hosted and single-user, there are no cloud subscriptions or required logins.
 
-## Installation
+## Quick Start Guide for New Users
 
-Clone the repository and install the Python package. We recommend using a virtual environment.
+Follow these steps exactly to get WiseXpense running on your machine for the first time.
 
-```bash
-git clone https://github.com/noahnghg/WiseXpense.git
-cd WiseXpense
+### Step 1: Download and Install
+1. Open your terminal app.
+2. Clone the repository to your computer by typing:
+   `git clone https://github.com/noahnghg/WiseXpense.git`
+3. Enter the project folder:
+   `cd WiseXpense`
+4. Set up an isolated Python environment:
+   `python3 -m venv .venv`
+5. Activate the environment:
+   `source .venv/bin/activate`
+6. Install the required packages:
+   `pip install -e .`
 
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -e .
-```
+### Step 2: Configure Your Bank and AI
+WiseXpense is 100% private. You need your own SimpleFIN token to connect to your bank, and an API key for your preferred AI.
 
-## Configuration (One-Time Setup)
+1. Go to https://bridge.simplefin.org/ in your browser, connect your bank account, and copy your "Setup Token".
+2. Go back to your terminal and run the setup wizard:
+   `wisexpense setup`
+3. Paste the SimpleFIN Setup Token when prompted and hit Enter.
+4. Select your preferred AI Provider (Gemini is recommended, but Claude, OpenAI, and local Ollama are supported).
+5. Paste the API key for your chosen AI Provider when prompted.
 
-Because WiseXpense is 100% private and runs locally on your machine, you must use your own SimpleFIN token to connect to banks securely. The conversational agent requires configuring your preferred LLM provider.
+### Step 3: Run the Dashboard
+1. Simply start the server by typing:
+   `wisexpense start`
+2. Wait for the terminal to indicate the application has launched. The tool will automatically initialize the AI brain, connect to SimpleFIN, and fetch your real-time financial data.
+3. Open a web browser and go to `http://localhost:8000`. You will see your financial dashboard and agentic chat interface.
 
-1. Visit [bridge.simplefin.org](https://bridge.simplefin.org/) to connect your bank and copy your Setup Token.
-2. Run the interactive setup wizard in your terminal:
-   ```bash
-   wisexpense setup
-   ```
-3. Paste your SimpleFIN token when prompted.
-4. Select your preferred AI Provider (Gemini is recommended, but Claude, OpenAI, and local Ollama are supported) and provide the respective API key.
+### Step 4: Interacting and Syncing
+1. Click the "Sync Transactions" button in the web sidebar whenever you want to pull fresh data from your bank.
+2. Type queries like "How much did I spend on food this month?" directly into the agentic chat box to analyze your data dynamically.
 
-## Usage
-
-Start the local server and open the web interface:
-
-```bash
-wisexpense start
-```
-
-Upon starting, the application will initialize the agentic brain, connect to the SimpleFIN bridge, and fetch real-time financial data before displaying the interactive dashboard.
-
-Other available commands:
-
+### Additional Commands
 - `wisexpense info`: Check configuration and bank connection status
 - `wisexpense reset`: Delete all local transaction data and drop the database
-- `dbt run`: Run the analytical data pipeline (make sure your virtual environment is active)
+- `dbt run`: Run the analytical data pipeline (requires your virtual environment to be active)
 
 ## Architecture
 
