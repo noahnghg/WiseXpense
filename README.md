@@ -1,4 +1,15 @@
+<div align="center">
+
+<img src="https://placehold.co/1200x250/111111/FACC15/png?text=WISEXPENSE&font=montserrat" alt="WiseXpense Banner" width="100%" />
+
 # WiseXpense (in progress)
+
+[![Docs](https://img.shields.io/badge/DOCS-LOCAL--ONLY-FACC15?style=for-the-badge)](#)
+[![License](https://img.shields.io/badge/LICENSE-MIT-brightgreen?style=for-the-badge)](LICENSE)
+[![Built By](https://img.shields.io/badge/BUILT%20BY-OPEN%20SOURCE-blueviolet?style=for-the-badge)](#)
+[![Data Stack](https://img.shields.io/badge/DATA-DUCKDB_&_DBT-orange?style=for-the-badge)](#)
+
+</div>
 
 WiseXpense is a self-hosted, agentic personal finance manager. It tracks spending, categorizes transactions, and provides financial insights via a conversational AI interface. Your data stays local on your machine using an embedded SQLite database.
 
