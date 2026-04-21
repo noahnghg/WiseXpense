@@ -48,6 +48,58 @@ WiseXpense is 100% private. You need your own SimpleFIN token to connect to your
 
 ## Architecture
 
+```mermaid
+graph TD
+    subgraph UI ["User Interface (Frontend)"]
+        React[React / Vite SPA]
+    end
+
+    subgraph Backend ["WiseXpense FastAPI Backend"]
+        FastAPI[FastAPI Server]
+        Agent[Agentic Core<br>LangChain / LangGraph]
+    end
+
+    subgraph External ["External Services"]
+        SimpleFIN[SimpleFIN Bridge API]
+        LLM[LLM Provider<br>Gemini, Claude, OpenAI, Ollama]
+    end
+
+    subgraph Data ["Data Layer & Pipelines"]
+        SQLite[(SQLite<br>Transactional DB)]
+        Dagster[Dagster Pipeline]
+        DuckDB[(DuckDB<br>Analytical OLAP)]
+        DBT[dbt Transformations]
+    end
+
+    %% Flow UI
+    React <-->|REST API| FastAPI
+    
+    %% Flow Backend -> External
+    FastAPI -- Fetch Transactions --> SimpleFIN
+    Agent <-->|Chat / Reasoning| LLM
+    FastAPI <-->|AI Requests| Agent
+    
+    %% Flow Backend -> Data
+    FastAPI -- Read/Write --> SQLite
+    Agent -- Query Spending --> SQLite
+    
+    %% Flow Analytics
+    SQLite -->|Extract| Dagster
+    Dagster -->|Load| DuckDB
+    DBT -->|Transform| DuckDB
+    
+    %% Styles
+    classDef blue fill:#dbeafe,stroke:#3b82f6,color:#1e3a8a
+    classDef green fill:#dcfce7,stroke:#22c55e,color:#14532d
+    classDef purple fill:#f3e8ff,stroke:#a855f7,color:#581c87
+    classDef gray fill:#f3f4f6,stroke:#9ca3af,color:#111827
+    
+    class React,FastAPI,Agent blue
+    class SQLite,DuckDB,DBT,Dagster green
+    class SimpleFIN,LLM purple
+    class UI,Backend,External,Data gray
+```
+
 - **Backend**: Python, FastAPI, SQLAlchemy
 - **AI Agent**: LangGraph, LangChain
 - **Data Engineering**: dbt (Data Build Tool) for transformations
