@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://placehold.co/1200x250/111111/FACC15/png?text=WISEXPENSE&font=montserrat" alt="WiseXpense Banner" width="100%" />
+<img src="assets/banner.svg" alt="WiseXpense Animated Banner" width="100%" />
 
 # WiseXpense (in progress)
 
