@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 34 34" width="34" height="34" role="img" aria-label="WiseXpense">
+  <!--
+    Static port of the <Logo> mark in components/Logo.tsx, on the same 34-unit
+    grid. Keep the two in sync: tile + coin + body + slot, navy on cream.
+  -->
+  <rect width="34" height="34" rx="10" fill="#0C2340"/>
+  <!-- coin -->
+  <circle cx="17" cy="10" r="6" fill="#FDF6E3"/>
+  <circle cx="17" cy="10" r="3.5" fill="none" stroke="#0C2340" stroke-width="2"/>
+  <!-- body -->
+  <rect x="6" y="16" width="22" height="13" rx="4" fill="#FDF6E3"/>
+  <!-- coin slot, cut into the top of the body (bottom corners rounded only) -->
+  <path d="M10 15h14v1a3 3 0 0 1-3 3h-8a3 3 0 0 1-3-3z" fill="#0C2340"/>
+</svg>
