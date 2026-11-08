@@ -1,33 +1,35 @@
 import type { Metadata } from "next";
-import { Source_Code_Pro } from "next/font/google";
+import { Newsreader, Public_Sans } from "next/font/google";
 import "./globals.css";
 
-const sourceCodePro = Source_Code_Pro({
+const newsreader = Newsreader({
   subsets: ["latin"],
-  variable: "--font-source-code-pro",
+  style: ["normal", "italic"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  variable: "--font-newsreader",
+  display: "swap",
+});
+
+const publicSans = Public_Sans({
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  variable: "--font-public-sans",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "WiseXpense — Financial Mastery Redefined",
-  description: "The architecture of personal wealth, visualized through a lens of absolute precision.",
+  title: "WiseXpense — Smart money manager",
+  description:
+    "WiseXpense reads your spending like a story and tells you, plainly, where the leaks are and how much is truly safe to spend.",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="dark scroll-smooth">
-      <head>
-        <link 
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" 
-          rel="stylesheet" 
-        />
-      </head>
-      <body className={`${sourceCodePro.variable} bg-background text-on-surface font-body selection:bg-secondary/30 antialiased`}>
-        {children}
-      </body>
+    <html lang="en" className={`${newsreader.variable} ${publicSans.variable}`}>
+      <body>{children}</body>
     </html>
   );
 }

@@ -1,101 +1,119 @@
 @import "tailwindcss";
 
+/* ---------------------------------------------------------------
+   WiseXpense design tokens — ported from the Claude Design source
+   (WiseXpense.dc.html). Palette: cream paper, navy ink, gold accent.
+   --------------------------------------------------------------- */
 @theme {
-  --font-georgia: Georgia, serif;
-  --font-headline: var(--font-source-code-pro);
-  --font-body: var(--font-source-code-pro);
-  --font-label: var(--font-source-code-pro);
+  --color-cream: #fdf6e3;
+  --color-panel: #fffdf5;
+  --color-band: #f6edcf;
+  --color-navy: #0c2340;
+  --color-gold: #b58900;
+  --color-sand: #e9c46a;
 
-  --color-secondary-fixed: #ffdea5;
-  --color-on-primary: #1c3340;
-  --color-surface-container-lowest: #0e0e0e;
-  --color-background: #131313;
-  --color-on-tertiary: #392f18;
-  --color-tertiary-container: #aa9b7d;
-  --color-on-secondary: #412d00;
-  --color-tertiary: #d5c5a4;
-  --color-on-tertiary-container: #3d331c;
-  --color-secondary-container: #604403;
-  --color-primary-fixed: #cee6f7;
-  --color-surface-dim: #131313;
-  --color-on-background: #e5e2e1;
-  --color-secondary: #e9c176;
-  --color-surface-container-low: #1c1b1b;
-  --color-on-secondary-fixed-variant: #5d4201;
-  --color-surface-container-high: #2a2a2a;
-  --color-primary-fixed-dim: #b2cadb;
-  --color-error-container: #93000a;
-  --color-tertiary-fixed-dim: #d5c5a4;
-  --color-on-primary-container: #213744;
-  --color-secondary-fixed-dim: #e9c176;
-  --color-on-surface-variant: #c3c7cb;
-  --color-primary: #b2cadb;
-  --color-on-tertiary-fixed-variant: #51452d;
-  --color-on-surface: #e5e2e1;
-  --color-surface-container-highest: #353534;
-  --color-surface: #131313;
-  --color-surface-bright: #3a3939;
-  --color-on-secondary-container: #dab36a;
-  --color-inverse-on-surface: #313030;
-  --color-inverse-primary: #4b6170;
-  --color-error: #ffb4ab;
-  --color-on-error: #690005;
-  --color-surface-container: #201f1f;
-  --color-surface-tint: #b2cadb;
-  --color-on-primary-fixed-variant: #334957;
-  --color-outline: #8d9196;
-  --color-inverse-surface: #e5e2e1;
-  --color-on-error-container: #ffdad6;
-  --color-primary-container: #89a0b0;
-  --color-outline-variant: #42474b;
-  --color-on-primary-fixed: #051e2a;
-  --color-on-secondary-fixed: #261900;
-  --color-tertiary-fixed: #f2e1bf;
-  --color-surface-variant: #353534;
-  --color-on-tertiary-fixed: #231a06;
+  --color-ink: #0c2340;
+  --color-ink-soft: #3d4f66;
+  --color-ink-muted: #5a6b82;
+  --color-muted: #8a94a6;
+  --color-on-navy: #9fb0c7;
+  --color-on-navy-soft: #b9c6d8;
+  --color-olive: #7a6520;
+  --color-olive-soft: #5a5030;
 
-  --radius-DEFAULT: 0.125rem;
-  --radius-lg: 0.25rem;
-  --radius-xl: 0.5rem;
-  --radius-full: 0.75rem;
-}
+  --color-danger: #dc322f;
+  --color-success: #5b7c00;
 
-body {
-  background: var(--color-background);
-  color: var(--color-on-surface);
-}
+  --font-serif: var(--font-newsreader), ui-serif, Georgia, serif;
+  --font-sans: var(--font-public-sans), ui-sans-serif, system-ui, sans-serif;
 
-.material-symbols-outlined {
-    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-}
+  --animate-rise: rise 0.7s ease both;
+  --animate-floaty: floaty 7s ease-in-out infinite;
+  --animate-ticker: tickerX 32s linear infinite;
+  --animate-grow-bar: growBar 0.7s ease both;
+  --animate-spin-y: spinY 5s linear infinite;
+  --animate-sheen: sheen 3.4s ease-in-out infinite;
+  --animate-pulse-dot: pulseDot 2.4s infinite;
 
-/* 
-  Animate the text gradient left-to-right between the cool blue and a gold shine
-*/
-.editorial-gradient {
-    background: linear-gradient(
-      90deg, 
-      #829AB1 0%, 
-      #D4B06A 25%, 
-      #FFF7D6 50%, 
-      #D4B06A 75%, 
-      #829AB1 100%
-    );
-    background-size: 200% auto;
-    color: #000;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: shine 4s linear infinite;
-}
-
-@keyframes shine {
-  to {
-    background-position: 200% center;
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(26px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes floaty {
+    0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); }
+    50% { transform: translateY(-13px) rotate(var(--r, 0deg)); }
+  }
+  @keyframes tickerX {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes growBar {
+    from { transform: scaleY(0); }
+    to { transform: scaleY(1); }
+  }
+  @keyframes spinY {
+    from { transform: rotateY(0); }
+    to { transform: rotateY(360deg); }
+  }
+  @keyframes sheen {
+    0%, 55% { transform: translateX(-140%) skewX(-18deg); }
+    100% { transform: translateX(260%) skewX(-18deg); }
+  }
+  @keyframes pulseDot {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(181, 137, 0, 0.45); }
+    50% { box-shadow: 0 0 0 9px rgba(181, 137, 0, 0); }
   }
 }
 
-.glass-card {
-    background: rgba(53, 53, 52, 0.4);
-    backdrop-filter: blur(16px);
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--color-cream);
+  color: var(--color-navy);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+input::placeholder {
+  color: var(--color-muted);
+}
+
+/* Elevation pair used by every raised card in the design: a tight
+   contact shadow plus a wide ambient one. */
+@utility card-lift {
+  box-shadow:
+    0 4px 10px rgba(12, 35, 64, 0.05),
+    0 26px 55px rgba(12, 35, 64, 0.12);
+}
+
+@utility card-lift-lg {
+  box-shadow:
+    0 6px 14px rgba(12, 35, 64, 0.06),
+    0 30px 60px rgba(12, 35, 64, 0.13);
+}
+
+@utility card-lift-navy {
+  box-shadow:
+    0 12px 26px rgba(12, 35, 64, 0.28),
+    0 42px 85px rgba(12, 35, 64, 0.35);
+}
+
+/* Scroll reveal: set by useReveal, cleared when the element enters view. */
+@utility reveal-hidden {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
